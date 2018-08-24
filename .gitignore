@@ -1,0 +1,6 @@
+.DS_Store
+.idea/
+data/WCS-Data-20110316
+__pycache__/
+*.csv
+*.ipynb_checkpoints/
