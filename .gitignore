@@ -3,4 +3,5 @@
 data/WCS-Data-20110316
 __pycache__/
 *.csv
+*.pickle
 *.ipynb_checkpoints/

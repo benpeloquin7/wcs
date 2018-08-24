@@ -37,30 +37,18 @@ def merge_datasets():
     df_chips = input_data(chip_url, chip_names, chip_dtypes)
     df_dict = input_data(dict_url, dict_names, dict_dtypes, [0])
     df_terms = input_data(term_url, term_names, term_dtypes)
-    df_foc_exp = input_data(foci_exp_url, foc_exp_names, foc_exp_dtypes)
+    df_foc_exp = input_data(foci_exp_url, foc_exp_names, foc_exp_dtypes) \
+        .reset_index(drop=True)
+    df_foc_exp['speaker_num_response'] = df_foc_exp \
+        .apply(lambda x: '{}-{}'.format(str(x['speaker_num']), str(x['response'])), axis=1)
     df_colors = input_data(colors_url, color_names, color_dtypes, [0])
 
-    # foc_exp -> term
-    joiner = ['lang_num', 'speaker_num', 'term_abbr']
-    df_join_1 = pd.merge(df_foc_exp, df_terms, on=joiner) \
-        .reset_index(drop=True)
-
-    # foc_exp -> term -> dict
-    joiner = ['lang_num', 'term_abbr']
-    df_join_2 = pd.merge(df_join_1, df_dict, on=joiner) \
-        .reset_index(drop=True)
-
-    # terms -> chips -> foc-exp -> dict
-    joiner = ['chip_num', 'chip_coord']
-    df_join_3 = pd.merge(df_join_2, df_chips, on=joiner) \
-        .reset_index(drop=True)
-
-    # terms -> chips -> foc-exp -> dict -> colors
-    joiner = ['chip_num']
-    df_join_4 = pd.merge(df_join_3, df_colors, on=joiner) \
-        .reset_index(drop=True)
-
-    return df_join_4
+    # Note that this data is sufficient for basic
+    # Gibson (2017) analysis (chips, terms, colors).
+    df_raw = pd.merge(
+        pd.merge(df_terms, df_chips, on=['chip_num']),
+        df_colors, on=['chip_num'])
+    return df_raw
 
 
 if __name__ == '__main__':
